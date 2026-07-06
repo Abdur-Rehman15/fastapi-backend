@@ -17,14 +17,15 @@ class TaskBase(SQLModel):
 class TaskCreate(TaskBase):
     pass
 
-
 class Task(TaskBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
 
 class TaskResponse(Task):
-    pass
+    message: str | None = None
 
+class TaskRead(Task):
+    pass
 
 class TaskUpdate(SQLModel):
     title: str | None = None
@@ -54,8 +55,10 @@ def create_task(new_task: TaskCreate, session: SessionDep) -> TaskResponse:
     session.add(db_task)
     session.commit()
     session.refresh(db_task)
-    print(f"task created with ID {db_task.id}")
-    return db_task
+    response_data = TaskResponse.model_validate(db_task)
+    response_data.message = f"task created with ID {db_task.id}"
+
+    return response_data
 
 
 # update
@@ -65,7 +68,9 @@ def update_task(
 ) -> TaskResponse:
     db_task = session.get(Task, task_id)
     if not db_task:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
+        )
 
     updated = updated_task.model_dump(exclude_unset=True)
 
@@ -76,25 +81,32 @@ def update_task(
     session.commit()
     session.refresh(db_task)
 
-    return db_task
+    response_data = TaskResponse.model_validate(db_task)
+    response_data.message = f"task with ID {db_task.id} updated"
+
+    return response_data
+
 
 # read
-@app.get("/tasks", response_model=list[TaskResponse])
+@app.get("/tasks", response_model=list[TaskRead])
 def read_tasks(session: SessionDep):
     statement = select(Task)
     tasks = session.exec(statement).all()
 
     return tasks
 
+
 # delete
 @app.delete("/tasks/{task_id}", status_code=status.HTTP_200_OK)
-def delete_task(task_id:int, session:SessionDep):
+def delete_task(task_id: int, session: SessionDep):
     db_task = session.get(Task, task_id)
 
     if not db_task:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
+        )
 
     session.delete(db_task)
     session.commit()
 
-    return {"message":f"task with ID:{db_task.id} deleted successfully"}
+    return {"message": f"task with ID:{db_task.id} deleted successfully"}
