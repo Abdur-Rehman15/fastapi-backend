@@ -25,7 +25,7 @@ class UserUpdate(SQLModel):
 
 
 class TaskBase(SQLModel):
-    title: int
+    title: str
     done: bool = False
 
 
