@@ -80,12 +80,10 @@ def create_user(user_in: UserCreate, session: SessionDep) -> UserBase:
 
 
 @app.post("/tasks", response_model=TaskRead)
-def create_task_for_user(task_in: TaskCreate, curr_user_id: int, session: SessionDep) -> TaskRead:
-    db_task = Task(
-        title=task_in.title,
-        done=task_in.done,
-        user_id=curr_user_id
-    )
+def create_task_for_user(
+    task_in: TaskCreate, curr_user_id: int, session: SessionDep
+) -> TaskRead:
+    db_task = Task(title=task_in.title, done=task_in.done, user_id=curr_user_id)
 
     session.add(db_task)
     session.commit()

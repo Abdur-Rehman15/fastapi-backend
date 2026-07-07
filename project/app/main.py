@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from routers import users, tasks
 from sqlmodel import SQLModel
-from database import engine
+from database.database import engine
 
 app = FastAPI()
 
