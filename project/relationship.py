@@ -1,5 +1,5 @@
-from sqlmodel import SQLModel, Field, create_engine, Session, select, Relationship
-from fastapi import FastAPI, Depends, HTTPException, status
+from sqlmodel import SQLModel, Field, create_engine, Session, Relationship
+from fastapi import FastAPI, Depends, status
 from pydantic import EmailStr
 from typing import Annotated
 import os
