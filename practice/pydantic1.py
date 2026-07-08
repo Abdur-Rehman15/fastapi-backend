@@ -1,7 +1,7 @@
 # =============PYDANTIC==============
 
 # base model
-from practice.pydantic import (
+from practice.pydantic1 import (
     BaseModel,
     ConfigDict,
     field_validator,
@@ -67,7 +67,7 @@ class Product(BaseModel):
 
 
 from fastapi import FastAPI, HTTPException, status
-from practice.pydantic import BaseModel, Field, EmailStr, ConfigDict, model_validator
+from practice.pydantic1 import BaseModel, Field, EmailStr, ConfigDict, model_validator
 from datetime import datetime
 
 fake_db = []

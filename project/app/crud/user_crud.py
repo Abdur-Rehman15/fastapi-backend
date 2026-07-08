@@ -1,7 +1,7 @@
 from sqlmodel import Session, select
 from models.user_model import User
 from schemas.user_schema import UserCreate, UserUpdate
-
+from security.security import hash_password
 
 def get_user_by_id(session: Session, user_id: int):
     return session.get(User, user_id)
@@ -21,7 +21,7 @@ def create_user(session: Session, user_in: UserCreate):
     db_user = User(
         username=user_in.username,
         email=user_in.email,
-        hashed_password=user_in.password,  # for now, without any hash
+        hashed_password=hash_password(user_in.password),
     )
     session.add(db_user)
     session.commit()

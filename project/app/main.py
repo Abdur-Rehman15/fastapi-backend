@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import users, tasks
+from routers import users, tasks, auth
 from sqlmodel import SQLModel
 from database.database import engine
 
@@ -14,3 +14,4 @@ def on_startup():
 
 app.include_router(users.router)
 app.include_router(tasks.router)
+app.include_router(auth.router)
