@@ -6,10 +6,14 @@ from models.user_model import User
 from sqlmodel import Session, select
 from database.database import get_session
 from fastapi import Depends, HTTPException
+import os
+from dotenv import load_dotenv
 
-SECRET = "your-secret-key"  # abhi ky liye idhr rkha he .env me daalne he
-ALGORITHM = "HS256"
-EXPIRES_IN_MINUTES = 30
+load_dotenv()
+
+SECRET = os.getenv("SECRET")
+ALGORITHM = os.getenv("ALGORITHM")
+EXPIRES_IN_MINUTES = int(os.getenv("EXPIRES_IN_MINUTES"))
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -54,11 +58,11 @@ def get_current_user(
 ):
     payload = decode_token(token)
     if not payload:
-        raise HTTPException(401, "invalid token, no payload")
+        raise HTTPException(401, "invalid token")
 
     username = payload.get("sub")
     if not username:
-        raise HTTPException(401, "invalid token, no username")
+        raise HTTPException(401, "invalid token")
 
     user = session.exec(select(User).where(User.username == username)).first()
     if not user:
